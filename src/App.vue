@@ -10,7 +10,6 @@
         </select>
       </label>
 
-      
       <label>
         Categories
         <select class="form-control" v-model="selectedCategory" @change="onSelectChange('category')">
@@ -20,7 +19,6 @@
         </select>
       </label>
 
-      
       <label>
         Lines
         <select class="form-control" v-model="selectedLine" @change="onSelectChange('line')">
@@ -30,7 +28,6 @@
         </select>
       </label>
 
-      
       <label>
         Seats
         <select class="form-control" v-model="selectedSeat" @change="onSelectChange('seat')">
@@ -71,8 +68,82 @@
   </div>
 </template>
 
-
 <script>
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 import axios from 'axios'
 
 export default {
@@ -88,7 +159,7 @@ export default {
       lines: {},
       seats: {},
       fulldata: {
-         categories: {}, sectors: {}, lines: {}, seats: {}
+        categories: {}, sectors: {}, lines: {}, seats: {}
       },
       endpoint: 'https://syn.su/js/front/data.js'
     }
@@ -99,171 +170,169 @@ export default {
      * @return {Object} All seats for selected sector
      */
     sectorSeats () {
-      let vm = this;
+      const vm = this
       if (!vm.selectedSector) {
-        return {};
+        return {}
       }
 
-      let lines = Object.keys(vm.data.lines).reduce((r, e) => {
-        let line = vm.data.lines[e];
+      const lines = Object.keys(vm.data.lines).reduce((r, e) => {
+        const line = vm.data.lines[e]
         if (!vm.selectedSector || line.sectors && line.sectors.has(vm.selectedSector)) {
-          line.seats = [];
-          r[e] = line;
+          line.seats = []
+          r[e] = line
         }
-        return r;
-      }, {});
+        return r
+      }, {})
 
       Object.keys(vm.data.seats).map((id) => {
-        let seat = vm.data.seats[id];
+        const seat = vm.data.seats[id]
         if (vm.selectedSector === seat.sector && lines[seat.line]) {
-          lines[seat.line].seats = lines[seat.line].seats || [];
-          lines[seat.line].seats.push(seat);
+          lines[seat.line].seats = lines[seat.line].seats || []
+          lines[seat.line].seats.push(seat)
         }
-      });
-      return lines;
+      })
+      return lines
     }
   },
 
-  created() {
-    this.getAllPosts();
+  created () {
+    this.getAllPosts()
   },
 
   methods: {
-    getAllPosts() {
+    getAllPosts () {
       axios.get(this.endpoint)
-        .then(response => {
-          //TODO: check up response status
-          this.data = response.data.response || {};
+        .then((response) => {
+          // TODO: check up response status
+          this.data = response.data.response || {}
 
-          //mapping:
-          let vm = this,
+          // mapping:
+          const vm = this,
             categories = this.data.categories,
             sectors = this.data.sectors,
-            lines = this.data.lines;
-          vm.sectors = this.data.sectors;
-          vm.freeSeats = new Set();
+            lines = this.data.lines
+          vm.sectors = this.data.sectors
+          vm.freeSeats = new Set()
 
-          Object.keys(this.data.seats).map(id => {
-            let _s = vm.data.seats[id],
+          Object.keys(this.data.seats).map((id) => {
+            const _s = vm.data.seats[id],
               c = categories[_s.category],
               s = sectors[_s.sector],
-              l = lines[_s.line];
+              l = lines[_s.line]
             _s.color = categories[_s.category].color;
             (c.sectors = c.sectors || new Set()).add(_s.sector);
             (c.lines = c.lines || new Set()).add(_s.line);
             (s.categories = s.categories || new Set()).add(_s.category);
             (s.lines = s.lines || new Set()).add(_s.line);
             (l.sectors = l.sectors || new Set()).add(_s.sector);
-            (l.categories = l.categories || new Set()).add(_s.category);
+            (l.categories = l.categories || new Set()).add(_s.category)
 
             if (!_s.status) {
-              vm.freeSeats.add(_s.sector + ':' + _s.category + ':' + _s.line);
+              vm.freeSeats.add(_s.sector + ':' + _s.category + ':' + _s.line)
             }
-
           })
         })
-        .catch(error => {
-          console.error(error);
+        .catch((error) => {
+          console.error(error)
         })
     },
 
     onSelectChange (select) {
-      let vm = this;
+      const vm = this
 
-      switch(select) {
-
+      switch (select) {
         case 'sector':
           if (!vm.selectedSector) {
-            vm.categories = vm.data.categories;
+            vm.categories = vm.data.categories
           }
 
-          vm.categories =  Object.keys(vm.data.categories).reduce((r, e) => {
-            let category = vm.data.categories[e];
+          vm.categories = Object.keys(vm.data.categories).reduce((r, e) => {
+            const category = vm.data.categories[e]
             if (!vm.selectedSector || category.sectors && category.sectors.has(vm.selectedSector)) {
-              r[e] = category;
+              r[e] = category
             }
-            return r;
-          }, {});
+            return r
+          }, {})
 
-          vm.selectedCategory = '';
-          vm.selectedLine = '';
-          vm.selectedSeat = '';
+          vm.selectedCategory = ''
+          vm.selectedLine = ''
+          vm.selectedSeat = ''
 
         case 'category':
           if (!vm.selectedSector) {
-            vm.lines = vm.data.lines;
+            vm.lines = vm.data.lines
           }
 
-          let lines, line;
+          let lines, line
 
           vm.lines = Object.keys(vm.data.lines).reduce((r, e) => {
-            line = vm.data.lines[e];
+            line = vm.data.lines[e]
             if ((!vm.selectedCategory || line.categories && line.categories.has(vm.selectedCategory)) &&
               (!vm.selectedSector || line.sectors && line.sectors.has(vm.selectedSector)) &&
                 vm.freeSeats.has(vm.selectedSector + ':' + vm.selectedCategory + ':' + line.id)
             ) {
-              r[e] = line;
+              r[e] = line
             }
-            return r;
-          }, {});
+            return r
+          }, {})
 
-          vm.selectedLine = '';
-          vm.selectedSeat = '';
+          vm.selectedLine = ''
+          vm.selectedSeat = ''
 
         case 'line':
           if (!vm.selectedSector && !vm.selectedCategory && !vm.selectedLine) {
-            return vm.data.seats;
+            return vm.data.seats
           }
 
           vm.seats = Object.keys(vm.data.seats).reduce((r, e) => {
-            let seat = vm.data.seats[e];
-            if (!seat.status
-              && (!vm.selectedCategory || seat.category == vm.selectedCategory)
-              && (!vm.selectedSector || seat.sector == vm.selectedSector)
-              && (!vm.selectedLine || seat.line == vm.selectedLine)) {
-              r[e] = seat;
+            const seat = vm.data.seats[e]
+            if (!seat.status &&
+              (!vm.selectedCategory || seat.category == vm.selectedCategory) &&
+              (!vm.selectedSector || seat.sector == vm.selectedSector) &&
+              (!vm.selectedLine || seat.line == vm.selectedLine)) {
+              r[e] = seat
             }
-            return r;
-          }, {});
+            return r
+          }, {})
 
-          vm.selectedSeat = '';
-          break;
+          vm.selectedSeat = ''
+          break
       }
     },
 
     seatHoverShow (event, seat) {
       if (seat.status) {
-        return;
+        return
       }
-      let el = event.target,
+      const el = event.target,
         rect = el.getBoundingClientRect(),
-        hc = this.$refs["hover-content"];
+        hc = this.$refs['hover-content']
 
-      hc.style.display = 'block';
-      hc.style.left = rect.left + 'px';
-      hc.style.top = rect.top + 'px';
-      hc.innerHTML = '';
-      hc.innerHTML = this.data.categories[seat.category].name + '<br>' + this.data.categories[seat.category].price + 'руб';
+      hc.style.display = 'block'
+      hc.style.left = rect.left + 'px'
+      hc.style.top = rect.top + 'px'
+      hc.innerHTML = ''
+      hc.innerHTML = this.data.categories[seat.category].name + '<br>' + this.data.categories[seat.category].price + 'руб'
     },
 
     seatHoverHide () {
-      let hc = this.$refs["hover-content"];
+      const hc = this.$refs['hover-content']
 
-      hc.style.display = 'none';
+      hc.style.display = 'none'
     },
 
     seatSelect (seat) {
       if (seat.status) {
-        return;
+        return
       }
-      this.selectedCategory = seat.category;
-      this.onSelectChange('category');
-      this.selectedLine = seat.line;
-      this.selectedSeat = seat.id;
+      this.selectedCategory = seat.category
+      this.onSelectChange('category')
+      this.selectedLine = seat.line
+      this.selectedSeat = seat.id
     },
 
     showAlert () {
-      let vm = this;
+      const vm = this
       if (vm.selectedSector && vm.selectedCategory && vm.selectedLine) {
         alert('id: ' + vm.selectedSeat)
       }
