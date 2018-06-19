@@ -1,5 +1,5 @@
 {
-  "name": "hello-world4",
+  "name": "seats",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -18,9 +18,13 @@
     "@vue/cli-service": "^3.0.0-beta.15",
     "@vue/eslint-config-standard": "^3.0.0-rc.3",
     "@vue/eslint-config-typescript": "^3.0.0-rc.3",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.12.0",
     "node-sass": "^4.9.0",
     "sass-loader": "^7.0.1",
     "typescript": "^2.9.2",
+    "vue-class-component": "^6.2.0",
     "vue-template-compiler": "^2.5.16"
   },
   "browserslist": [
