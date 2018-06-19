@@ -11,10 +11,13 @@ import ComSelect from './components/ComSelect'
 
 export default class App extends Vue {
   // initial data
-  selectedSector = ''
-  selectedCategory = ''
-  selectedLine = ''
-  selectedSeat = ''
+  selectedSeat = 4046;
+  selected = {
+    sector: 0,
+    line: 0,
+    category: 0,
+    seat: 0
+  }
   sectors = {}
   categories = {}
   lines = {}
@@ -25,17 +28,18 @@ export default class App extends Vue {
   }
 
   /**
-   * @return {Object} All seats for selected sector
+   * All seats for selected sector
+   * @return {Object}
    */
   get sectorSeats () : object {
     const vm: any = this
-    if (!vm.selectedSector) {
+    if (!vm.selected.sector) {
       return {}
     }
 
     const lines: any = Object.keys(vm.data.lines).reduce((r, e) => {
       const line = vm.data.lines[e]
-      if (!vm.selectedSector || line.sectors && line.sectors.has(vm.selectedSector)) {
+      if (!vm.selected.sector || line.sectors && line.sectors.has(vm.selected.sector)) {
         line.seats = []
         r[e] = line
       }
@@ -44,7 +48,7 @@ export default class App extends Vue {
 
     Object.keys(vm.data.seats).map((id) => {
       const seat = vm.data.seats[id]
-      if (vm.selectedSector === seat.sector && lines[seat.line]) {
+      if (vm.selected.sector === seat.sector && lines[seat.line]) {
         lines[seat.line].seats = lines[seat.line].seats || []
         lines[seat.line].seats.push(seat)
       }
@@ -103,29 +107,30 @@ export default class App extends Vue {
    * Rebuild current data for selectboxes
    * @param {string} select name
    */
-  onSelectChange (select: string) {
+  onSelectChange (select: string, data?: number) {
     const vm: any = this
+    vm.selected[select] = data
 
     switch (select) {
       case 'sector':
-        if (!vm.selectedSector) {
+        if (!vm.selected.sector) {
           vm.categories = vm.data.categories
         }
 
         vm.categories = Object.keys(vm.data.categories).reduce((r, e) => {
           const category = vm.data.categories[e]
-          if (!vm.selectedSector || category.sectors && category.sectors.has(vm.selectedSector)) {
+          if (!data || category.sectors && category.sectors.has(data)) {
             r[e] = category
           }
           return r
         }, {})
 
-        vm.selectedCategory = ''
-        vm.selectedLine = ''
-        vm.selectedSeat = ''
+        vm.selected.category = ''
+        vm.selected.line = ''
+        vm.selected.seat = ''
 
       case 'category':
-        if (!vm.selectedSector) {
+        if (!vm.selected.sector) {
           vm.lines = vm.data.lines
         }
 
@@ -134,35 +139,35 @@ export default class App extends Vue {
 
         vm.lines = Object.keys(vm.data.lines).reduce((r, e) => {
           line = vm.data.lines[e]
-          if ((!vm.selectedCategory || line.categories && line.categories.has(vm.selectedCategory)) &&
-            (!vm.selectedSector || line.sectors && line.sectors.has(vm.selectedSector)) &&
-              vm.freeSeats.has(`${vm.selectedSector}:${vm.selectedCategory}:${line.id}`)
+          if ((!vm.selected.category || line.categories && line.categories.has(vm.selected.category)) &&
+            (!vm.selected.sector || line.sectors && line.sectors.has(vm.selected.sector)) &&
+              vm.freeSeats.has(`${vm.selected.sector}:${vm.selected.category}:${line.id}`)
           ) {
             r[e] = line
           }
           return r
         }, {})
 
-        vm.selectedLine = ''
-        vm.selectedSeat = ''
+        vm.selected.line = ''
+        vm.selected.seat = ''
 
       case 'line':
-        if (!vm.selectedSector && !vm.selectedCategory && !vm.selectedLine) {
+        if (!vm.selected.sector && !vm.selected.category && !vm.selected.line) {
           return vm.data.seats
         }
 
         vm.seats = Object.keys(vm.data.seats).reduce((r, e) => {
           const seat = vm.data.seats[e]
           if (!seat.status &&
-            (!vm.selectedCategory || seat.category === vm.selectedCategory) &&
-            (!vm.selectedSector || seat.sector === vm.selectedSector) &&
-            (!vm.selectedLine || seat.line === vm.selectedLine)) {
+            (!vm.selected.category || seat.category === vm.selected.category) &&
+            (!vm.selected.sector || seat.sector === vm.selected.sector) &&
+            (!vm.selected.line || seat.line === vm.selected.line)) {
             r[e] = seat
           }
           return r
         }, {})
 
-        vm.selectedSeat = ''
+        vm.selected.seat = ''
         break
     }
   }
@@ -205,10 +210,12 @@ export default class App extends Vue {
     if (seat.status) {
       return
     }
-    this.selectedCategory = seat.category
-    this.onSelectChange('category')
-    this.selectedLine = seat.line
-    this.selectedSeat = seat.id
+    const vm = this;
+    vm.selected.category = seat.category
+    vm.onSelectChange('category', seat.category)
+    vm.selected.line = seat.line
+    vm.selected.seat = seat.id
+    vm.selectedSeat = seat.id
   }
 
   /**
@@ -216,8 +223,8 @@ export default class App extends Vue {
    */
   showAlert () {
     const vm = this
-    if (vm.selectedSector && vm.selectedCategory && vm.selectedLine) {
-      alert(`id: ${vm.selectedSeat}`)
+    if (vm.selected.sector && vm.selected.category && vm.selected.line) {
+      alert(`id: ${vm.selected.seat}`)
     }
   }
 }

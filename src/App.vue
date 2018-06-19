@@ -1,52 +1,45 @@
 <template>
   <div id="app">
     <aside>
-      <label>
-        Sectors
-        <select class="form-control" v-model="selectedSector" @change="onSelectChange('sector')">
-          <option
-            v-for="option in sectors"
-            :value="option.id"
-            :key="option.id">{{option.name}}</option>
-        </select>
-      </label>
+      <com-select
+        label="Sectors"
+        name="sector"
+        :value="selected.sector"
+        :options="sectors"
+        @onSelectChange="onSelectChange"
+      ></com-select> 
 
-      <label>
-        Categories
-        <select class="form-control" v-model="selectedCategory" @change="onSelectChange('category')">
-          <option
-            v-for="option in categories"
-            :value="option.id"
-            :key="option.id">{{option.name}}</option>
-        </select>
-      </label>
+      <com-select
+        label="Categories"
+        name="category"
+        :value="selected.category"
+        :options="categories"
+        @onSelectChange="onSelectChange"
+      ></com-select> 
 
-      <label>
-        Lines
-        <select class="form-control" v-model="selectedLine" @change="onSelectChange('line')">
-          <option
-            v-for="option in lines"
-            :value="option.id"
-            :key="option.id">{{option.name}}</option>
-        </select>
-      </label>
+      <com-select
+        label="Lines"
+        name="line"
+        :value="selected.line"
+        :options="lines"
+        @onSelectChange="onSelectChange"
+      ></com-select> 
 
-      <label>
-        Seats
-        <select class="form-control" v-model="selectedSeat" @change="onSelectChange('seat')">
-          <option
-            v-for="option in seats"
-            :value="option.id"
-            :key="option.id">{{option.seat}}</option>
-        </select>
-      </label>
+      <com-select
+        label="Seats"
+        name="seat"
+        optionNameKey="seat"
+        :value="selected.seat"
+        :options="seats"
+        @onSelectChange="onSelectChange"
+      ></com-select> 
 
       <button @click="showAlert">Save</button>
     </aside>
 
     <main class="content">
       <div
-        v-if="selectedSector"
+        v-if="selected.sector"
         class="sector">
         <p
           v-for="line in sectorSeats"
@@ -62,7 +55,7 @@
             @click="seatSelect(seat)"
             :class="{
               free: !seat.status,
-              active: seat.id == selectedSeat
+              active: seat.id == selected.seat
             }"
             :style="{
               'background-color': seat.color
